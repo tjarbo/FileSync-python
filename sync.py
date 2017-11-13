@@ -94,3 +94,28 @@ def backupErstellen():
 
 	print(" ")
 
+def mtimeGenerieren(ItemsOnC, ItemsOnUSB):
+	print("\033[93m \033[4m ***** \033[95mGeneriere Array mit mTimes 🕒🛠 \033[93m *****\033[0m")
+
+	print("\033[31m *** Für C \033[0m ")
+	cTimes = {}
+
+	for item in ItemsOnC:
+		mTime = path.getmtime(item)
+		print(" ** 🕑 \033[35m" + path.split(item)[1] + " => \033[36m" + str(mTime) + "\033[0m")
+		cTimes[str(item)] = mTime
+
+	print(" **")
+
+	print("\033[31m *** Für USB \033[0m ")
+	usbTimes = {}
+
+	for item in ItemsOnUSB:
+		mTime = path.getmtime(item)
+		print(" ** 🕣 \033[35m" + path.split(item)[1] + " => \033[36m" + str(mTime) + "\033[0m")
+		usbTimes[str(item)] = mTime
+
+	print("\033[93m ** 🎉 FERTIG! **\033[0m ")
+	print(" ")
+	return (cTimes, usbTimes)
+
