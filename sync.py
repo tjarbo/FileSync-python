@@ -119,3 +119,64 @@ def mtimeGenerieren(ItemsOnC, ItemsOnUSB):
 	print(" ")
 	return (cTimes, usbTimes)
 
+def synCzuUSB(ItemsOnC, ItemsOnUSB, cTimes, usbTimes):
+	print("\033[93m \033[4m *****\033[95m Synchronisere Dateien von C zu USB \033[93m*****\033[0m")
+
+	for item in ItemsOnC:
+		itemMTime = cTimes[str(item)]
+
+		#Gibt es diese Datei auch auf dem USB Pfad:
+
+		treeItems = item.split("/")
+		unterOrdnerName = treeItems[len(treeItems) - 2]
+		fileName =  treeItems[len(treeItems) - 1]
+
+		if unterOrdnerName == OrdnerName:
+			itemPfadOnUSB = "./" + OrdnerName + "/" + fileName
+
+			#Vergleichen welche Datei älter ist
+			if cTimes[item] > usbTimes.get(itemPfadOnUSB, 0):
+				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von C zu USB ! \033[0m")
+				# TODO: Datei von C -> USB
+
+			elif cTimes[item] == usbTimes.get(itemPfadOnUSB, 0):
+				print(" ** \033[92m \033[01m Datei " + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+
+			else:
+				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
+				# TODO: Datei von USB -> C
+				pass
+
+
+		else:
+			itemPfadOnUSB = "./" + OrdnerName + "/" + unterOrdnerName + "/" + fileName
+			if path.lexists("./" + OrdnerName + "/" + unterOrdnerName + "/"):
+				#Ordner existiert aus USB -> Vergleichen welche Datei älter ist
+
+				if cTimes[item] > usbTimes.get(itemPfadOnUSB, 0):
+					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von C zu USB ! \033[0m")
+					# TODO: Datei von C -> USB
+
+				elif cTimes[item] == usbTimes.get(itemPfadOnUSB, 0):
+					print(" ** \033[92m \033[01m Datei " + str(unterOrdnerName) + "/" + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+
+				else:
+					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von USB zu C ! \033[0m")
+					# TODO: Datei von USB -> C
+
+			else:
+				#Der Ordner existiert nicht auf dem USB -> erstellen und Datei kopieren
+				system("mkdir ./" + OrdnerName + "/" + unterOrdnerName + "/")
+				print(" ** \033[93m \033[01m Sync " + unterOrdnerName + "/" + str(fileName) + " von C zu USB ! \033[0m")
+				#TODO: Datei von C -> USB
+
+		#Lösche das Item aus dem Array, damit es nicht nochmal bearbeitet wird in der synUSBzuC
+		try:
+			ItemsOnUSB.remove(itemPfadOnUSB)
+			usbTimes[itemPfadOnUSB] = 0
+		except ValueError:
+			pass
+
+	print("")
+	return ItemsOnUSB
+
