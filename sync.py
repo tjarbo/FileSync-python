@@ -1,0 +1,5 @@
+## FileSync ##
+
+## Config ##
+onePath = ""
+secondPath = ""
