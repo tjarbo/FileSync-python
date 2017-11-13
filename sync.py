@@ -6,8 +6,8 @@ from os import system
 import glob
 
 ## Config ##
-onePath = ""
-secondPath = ""
+PathOnC = ""
+OrdnerName = "test"
 
 print("\033[46m    //####### ## //        //#######    \033[0m")
 print("\033[46m   //        ## //        //            \033[0m")
@@ -71,3 +71,26 @@ def dateinIndexieren():
 	print(" ")
 
 	return (ItemsOnC, ItemsOnUSB)
+
+def backupErstellen():
+	print("\033[93m \033[4m ***** \033[95mErstelle BackUp Ordner 💾\033[93m *****\033[0m")
+	print("\033[31m ** Lösche altes BackUp ❌ (falls vorhanden)\033[0m")
+
+	print("\033[36m ** ✅ -> C \033[0m")
+	system("rm -fr {0}/filesync_backup".format(PathOnC))
+
+	print("\033[36m ** ✅ -> USB \033[0m")
+	system("rm -fr {0}/filesync_backup".format("."))
+
+	print(" **")
+
+	print("\033[31m ** Neues BackUp erstellen \033[0m 🛁")
+
+	print("\033[92m ** ✅ -> C \033[0m")
+	system("cp -R {0}/{1} {0}/filesync_backup".format(PathOnC, OrdnerName))
+
+	print("\033[92m ** ✅ -> USB \033[0m")
+	system("cp -R ./{0} filesync_backup".format(OrdnerName))
+
+	print(" ")
+
