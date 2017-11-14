@@ -184,3 +184,50 @@ def bewegeDateiVon(start, ziel):
 	system("cp -f {0} {1}".format(start, ziel))
 
 
+def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
+	print("\033[93m \033[4m ***** \033[95mSynchronisere Dateien von USB zu C\033[93m *****\033[0m")
+
+	for item in ItemsOnUSB:
+		#Gibt es diese Datei auch auf C:
+
+		treeItems = item.split("/")
+		unterOrdnerName = treeItems[len(treeItems) - 2]
+		fileName =  treeItems[len(treeItems) - 1]
+
+		if unterOrdnerName == OrdnerName:
+			itemPfadOnC = PathOnC  + OrdnerName + "/" + fileName
+
+			#Vergleichen welche Datei älter ist
+			if  usbTimes[item] > cTimes.get(itemPfadOnC, 0):
+				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
+				# TODO: Datei von USB -> C
+
+			elif usbTimes[item] == cTimes.get(itemPfadOnC, 0):
+				print(" ** \033[92m \033[01m Datei " + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+
+			else:
+				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von C zu USB! \033[0m")
+				# TODO: Datei von C -> USB
+
+		else:
+			itemPfadOnC = PathOnC + OrdnerName + "/" + unterOrdnerName + "/" + fileName
+			if path.lexists(PathOnC + OrdnerName + "/" + unterOrdnerName + "/"):
+				#Ordner existiert in C -> Vergleichen welche Datei älter ist
+
+				if usbTimes[item] > cTimes.get(itemPfadOnC, 0):
+					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/"+ str(fileName) + " von USB zu C ! \033[0m")
+					# TODO: Datei von USB -> C
+
+				elif usbTimes[item] == cTimes.get(itemPfadOnC, 0):
+					print(" ** \033[92m \033[01m Datei " + str(unterOrdnerName) + "/" + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+
+				else:
+					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von C zu USB! \033[0m")
+					# TODO: Datei von C -> USB
+
+			else:
+				#Der Ordner existiert nicht auf C -> erstellen und Datei kopieren
+				system("mkdir " + PathOnC + OrdnerName + "/" + unterOrdnerName + "/")
+				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
+				#TODO: Datei von USB -> C
+
