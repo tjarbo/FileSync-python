@@ -180,3 +180,7 @@ def synCzuUSB(ItemsOnC, ItemsOnUSB, cTimes, usbTimes):
 	print("")
 	return ItemsOnUSB
 
+def bewegeDateiVon(start, ziel):
+	system("cp -f {0} {1}".format(start, ziel))
+
+
