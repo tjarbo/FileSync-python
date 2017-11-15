@@ -137,15 +137,14 @@ def synCzuUSB(ItemsOnC, ItemsOnUSB, cTimes, usbTimes):
 			#Vergleichen welche Datei älter ist
 			if cTimes[item] > usbTimes.get(itemPfadOnUSB, 0):
 				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von C zu USB ! \033[0m")
-				# TODO: Datei von C -> USB
+				bewegeDateiVon(item, itemPfadOnUSB)
 
 			elif cTimes[item] == usbTimes.get(itemPfadOnUSB, 0):
 				print(" ** \033[92m \033[01m Datei " + str(fileName) + " ist auf beiden aktuell ! \033[0m")
 
 			else:
 				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
-				# TODO: Datei von USB -> C
-				pass
+				bewegeDateiVon(itemPfadOnUSB, item)
 
 
 		else:
@@ -155,20 +154,20 @@ def synCzuUSB(ItemsOnC, ItemsOnUSB, cTimes, usbTimes):
 
 				if cTimes[item] > usbTimes.get(itemPfadOnUSB, 0):
 					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von C zu USB ! \033[0m")
-					# TODO: Datei von C -> USB
+					bewegeDateiVon(item, itemPfadOnUSB)
 
 				elif cTimes[item] == usbTimes.get(itemPfadOnUSB, 0):
 					print(" ** \033[92m \033[01m Datei " + str(unterOrdnerName) + "/" + str(fileName) + " ist auf beiden aktuell ! \033[0m")
 
 				else:
 					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von USB zu C ! \033[0m")
-					# TODO: Datei von USB -> C
+					bewegeDateiVon(itemPfadOnUSB, item)
 
 			else:
 				#Der Ordner existiert nicht auf dem USB -> erstellen und Datei kopieren
 				system("mkdir ./" + OrdnerName + "/" + unterOrdnerName + "/")
 				print(" ** \033[93m \033[01m Sync " + unterOrdnerName + "/" + str(fileName) + " von C zu USB ! \033[0m")
-				#TODO: Datei von C -> USB
+				bewegeDateiVon(item, itemPfadOnUSB)
 
 		#Lösche das Item aus dem Array, damit es nicht nochmal bearbeitet wird in der synUSBzuC
 		try:
@@ -200,14 +199,14 @@ def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
 			#Vergleichen welche Datei älter ist
 			if  usbTimes[item] > cTimes.get(itemPfadOnC, 0):
 				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
-				# TODO: Datei von USB -> C
+				bewegeDateiVon(item, itemPfadOnC)
 
 			elif usbTimes[item] == cTimes.get(itemPfadOnC, 0):
 				print(" ** \033[92m \033[01m Datei " + str(fileName) + " ist auf beiden aktuell ! \033[0m")
 
 			else:
 				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von C zu USB! \033[0m")
-				# TODO: Datei von C -> USB
+				bewegeDateiVon(itemPfadOnC, item)
 
 		else:
 			itemPfadOnC = PathOnC + OrdnerName + "/" + unterOrdnerName + "/" + fileName
@@ -216,18 +215,18 @@ def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
 
 				if usbTimes[item] > cTimes.get(itemPfadOnC, 0):
 					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/"+ str(fileName) + " von USB zu C ! \033[0m")
-					# TODO: Datei von USB -> C
+					bewegeDateiVon(item, itemPfadOnC)
 
 				elif usbTimes[item] == cTimes.get(itemPfadOnC, 0):
 					print(" ** \033[92m \033[01m Datei " + str(unterOrdnerName) + "/" + str(fileName) + " ist auf beiden aktuell ! \033[0m")
 
 				else:
 					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von C zu USB! \033[0m")
-					# TODO: Datei von C -> USB
+					bewegeDateiVon(itemPfadOnC, item)
 
 			else:
 				#Der Ordner existiert nicht auf C -> erstellen und Datei kopieren
 				system("mkdir " + PathOnC + OrdnerName + "/" + unterOrdnerName + "/")
 				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
-				#TODO: Datei von USB -> C
+				bewegeDateiVon(item, itemPfadOnC)
 
