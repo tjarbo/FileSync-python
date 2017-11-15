@@ -120,7 +120,7 @@ def mtimeGenerieren(ItemsOnC, ItemsOnUSB):
 	return (cTimes, usbTimes)
 
 def synCzuUSB(ItemsOnC, ItemsOnUSB, cTimes, usbTimes):
-	print("\033[93m \033[4m *****\033[95m Synchronisere Dateien von C zu USB \033[93m*****\033[0m")
+	print("\033[93m \033[4m *****\033[95m Synchronisere Dateien (neue Dateien von C zu USB)\033[93m *****\033[0m")
 
 	for item in ItemsOnC:
 		itemMTime = cTimes[str(item)]
@@ -185,7 +185,7 @@ def bewegeDateiVon(start, ziel):
 
 
 def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
-	print("\033[93m \033[4m ***** \033[95mSynchronisere Dateien von USB zu C\033[93m *****\033[0m")
+	print("\033[93m \033[4m ***** \033[95mSynchronisere neue Dateien von USB\033[93m *****\033[0m")
 
 	for item in ItemsOnUSB:
 		#Gibt es diese Datei auch auf C:
