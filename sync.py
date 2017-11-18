@@ -232,3 +232,8 @@ def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
 
 	if len(ItemsOnUSB) == 0:
 		print(" ** Keine da 🤷")
+backupErstellen()
+iC, iUSB = dateinIndexieren()
+mC, mUSB = mtimeGenerieren(iC, iUSB)
+iUSB = synCzuUSB(iC, iUSB, mC, mUSB)
+synUSBzuC(iUSB, mC, mUSB)
