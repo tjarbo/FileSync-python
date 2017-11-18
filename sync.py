@@ -230,3 +230,5 @@ def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
 				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
 				bewegeDateiVon(item, itemPfadOnC)
 
+	if len(ItemsOnUSB) == 0:
+		print(" ** Keine da 🤷")
