@@ -25,59 +25,59 @@ def dateinIndexieren():
 	print("\033[93m \033[4m *****  \033[95mIndexiere Dateien 🗃 \033[93m *****\033[0m")
 
 	print("\033[31m *** Liste alle Items auf C ... \033[0m")
-	tree = glob.glob(PathOnC + OrdnerName + "/*")
-	ItemsOnC = []
-	OrdnerOnC = []
+	tree = glob.glob(PfadAufHDD + OrdnerName + "/*")
+	ItemsHDD = []
+	unterordner = []
 
 	for item in tree:
 		if path.isfile(item):
 			print(" ** 📝 \033[92m" + path.split(item)[1] + " gefunden !\033[0m")
-			ItemsOnC.append(item)
+			ItemsHDD.append(item)
 		else:
-			OrdnerOnC.append(item)
+			unterordner.append(item)
 
-	for itemOrdner in OrdnerOnC:
+	for itemOrdner in unterordner:
 		tree = glob.glob(itemOrdner + "/*")
 
 		for fileItem in tree:
 			if path.isfile(fileItem):
 				print(" ** 📝 \033[92m" + path.split(itemOrdner)[1] + "/" + path.split(fileItem)[1] + " gefunden !\033[0m")
-				ItemsOnC.append(fileItem)
+				ItemsHDD.append(fileItem)
 
 	#print(" ** 🎉 FERTIG! \033[0m **")
 	print(" **")
 
 	print("\033[31m *** Liste alle Datein von USB ...\033[0m ")
 	tree = glob.glob("./" + OrdnerName + "/*")
-	ItemsOnUSB = []
-	OrdnerOnUSB = []
+	ItemsUSB = []
+	unterordnerAufUSB = []
 
 	for item in tree:
 		if path.isfile(item):
 			print(" ** 📝 \033[92m " + path.split(item)[1] + " gefunden !\033[0m")
-			ItemsOnUSB.append(item)
+			ItemsUSB.append(item)
 		else:
-			OrdnerOnUSB.append(item)
+			unterordnerAufUSB.append(item)
 
-	for itemOrdner in OrdnerOnUSB:
+	for itemOrdner in unterordnerAufUSB:
 		tree = glob.glob(itemOrdner + "/*")
 
 		for fileItem in tree:
 			if path.isfile(fileItem):
 				print(" ** 📝 \033[92m " + path.split(itemOrdner)[1] + "/" + path.split(fileItem)[1] + " gefunden !\033[0m")
-				ItemsOnUSB.append(fileItem)
+				ItemsUSB.append(fileItem)
 
 	print("\033[93m ** 🎉 FERTIG! **\033[0m ")
 	print(" ")
 
-	return (ItemsOnC, ItemsOnUSB)
+	return (ItemsHDD, ItemsUSB)
 
 def backupErstellen():
 	print("\033[93m \033[4m ***** \033[95mErstelle BackUp Ordner 💾\033[93m *****\033[0m")
 	print("\033[31m ** Lösche altes BackUp ❌ (falls vorhanden)\033[0m")
 
 	print("\033[36m ** ✅ -> C \033[0m")
-	system("rm -fr {0}/filesync_backup".format(PathOnC))
+	system("rm -fr {0}/filesync_backup".format(PfadAufHDD))
 
 	print("\033[36m ** ✅ -> USB \033[0m")
 	system("rm -fr {0}/filesync_backup".format("."))
@@ -87,153 +87,155 @@ def backupErstellen():
 	print("\033[31m ** Neues BackUp erstellen \033[0m 🛁")
 
 	print("\033[92m ** ✅ -> C \033[0m")
-	system("cp -R {0}/{1} {0}/filesync_backup".format(PathOnC, OrdnerName))
+	system("cp -R {0}/{1} {0}/filesync_backup".format(PfadAufHDD, OrdnerName))
 
 	print("\033[92m ** ✅ -> USB \033[0m")
 	system("cp -R ./{0} filesync_backup".format(OrdnerName))
 
 	print(" ")
 
-def mtimeGenerieren(ItemsOnC, ItemsOnUSB):
+def mtimeGenerieren(itemsHDD, itemsUSB):
 	print("\033[93m \033[4m ***** \033[95mGeneriere Array mit mTimes 🕒🛠 \033[93m *****\033[0m")
 
 	print("\033[31m *** Für C \033[0m ")
-	cTimes = {}
+	timesHDD = {}
 
-	for item in ItemsOnC:
+	for item in itemsHDD:
 		mTime = path.getmtime(item)
 		print(" ** 🕑 \033[35m" + path.split(item)[1] + " => \033[36m" + str(mTime) + "\033[0m")
-		cTimes[str(item)] = mTime
+		timesHDD[str(item)] = mTime
 
 	print(" **")
 
 	print("\033[31m *** Für USB \033[0m ")
-	usbTimes = {}
+	timesUSB = {}
 
-	for item in ItemsOnUSB:
+	for item in itemsUSB:
 		mTime = path.getmtime(item)
 		print(" ** 🕣 \033[35m" + path.split(item)[1] + " => \033[36m" + str(mTime) + "\033[0m")
-		usbTimes[str(item)] = mTime
+		timesUSB[str(item)] = mTime
 
 	print("\033[93m ** 🎉 FERTIG! **\033[0m ")
 	print(" ")
-	return (cTimes, usbTimes)
+	return (timesHDD, timesUSB)
 
-def synCzuUSB(ItemsOnC, ItemsOnUSB, cTimes, usbTimes):
+def synCzuUSB(itemsHDD, itemsUSB, timesHDD, timesUSB):
 	print("\033[93m \033[4m *****\033[95m Synchronisere Dateien (neue Dateien von C zu USB)\033[93m *****\033[0m")
 
-	for item in ItemsOnC:
-		itemMTime = cTimes[str(item)]
+	for item in itemsHDD:
+		itemMTime = timesHDD[str(item)]
 
 		#Gibt es diese Datei auch auf dem USB Pfad:
 
 		treeItems = item.split("/")
-		unterOrdnerName = treeItems[len(treeItems) - 2]
-		fileName =  treeItems[len(treeItems) - 1]
+		unterordnerName = treeItems[len(treeItems) - 2]
+		dateiname =  treeItems[len(treeItems) - 1]
 
-		if unterOrdnerName == OrdnerName:
-			itemPfadOnUSB = "./" + OrdnerName + "/" + fileName
+		if unterordnerName == OrdnerName:
+			dateipfadUSB = "./" + OrdnerName + "/" + dateiname
 
 			#Vergleichen welche Datei älter ist
-			if cTimes[item] > usbTimes.get(itemPfadOnUSB, 0):
-				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von C zu USB ! \033[0m")
-				bewegeDateiVon(item, itemPfadOnUSB)
+			if timesHDD[item] > timesUSB.get(dateipfadUSB, 0):
+				print(" ** \033[93m \033[01m Sync " + str(dateiname) + " von C zu USB ! \033[0m")
+				bewegeDateiVon(item, dateipfadUSB)
 
-			elif cTimes[item] == usbTimes.get(itemPfadOnUSB, 0):
-				print(" ** \033[92m \033[01m Datei " + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+			elif timesHDD[item] == timesUSB.get(dateipfadUSB, 0):
+				print(" ** \033[92m \033[01m Datei " + str(dateiname) + " ist auf beiden aktuell ! \033[0m")
 
 			else:
-				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
-				bewegeDateiVon(itemPfadOnUSB, item)
+				print(" ** \033[93m \033[01m Sync " + str(dateiname) + " von USB zu C ! \033[0m")
+				bewegeDateiVon(dateipfadUSB, item)
 
 
 		else:
-			itemPfadOnUSB = "./" + OrdnerName + "/" + unterOrdnerName + "/" + fileName
-			if path.lexists("./" + OrdnerName + "/" + unterOrdnerName + "/"):
+			dateipfadUSB = "./" + OrdnerName + "/" + unterordnerName + "/" + dateiname
+			if path.lexists("./" + OrdnerName + "/" + unterordnerName + "/"):
 				#Ordner existiert aus USB -> Vergleichen welche Datei älter ist
 
-				if cTimes[item] > usbTimes.get(itemPfadOnUSB, 0):
-					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von C zu USB ! \033[0m")
-					bewegeDateiVon(item, itemPfadOnUSB)
+				if timesHDD[item] > timesUSB.get(dateipfadUSB, 0):
+					print(" ** \033[93m \033[01m Sync " + str(unterordnerName) + "/" + str(dateiname) + " von C zu USB ! \033[0m")
+					bewegeDateiVon(item, dateipfadUSB)
 
-				elif cTimes[item] == usbTimes.get(itemPfadOnUSB, 0):
-					print(" ** \033[92m \033[01m Datei " + str(unterOrdnerName) + "/" + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+				elif timesHDD[item] == timesUSB.get(dateipfadUSB, 0):
+					print(" ** \033[92m \033[01m Datei " + str(unterordnerName) + "/" + str(dateiname) + " ist auf beiden aktuell ! \033[0m")
 
 				else:
-					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von USB zu C ! \033[0m")
-					bewegeDateiVon(itemPfadOnUSB, item)
+					print(" ** \033[93m \033[01m Sync " + str(unterordnerName) + "/" + str(dateiname) + " von USB zu C ! \033[0m")
+					bewegeDateiVon(dateipfadUSB, item)
 
 			else:
 				#Der Ordner existiert nicht auf dem USB -> erstellen und Datei kopieren
-				system("mkdir ./" + OrdnerName + "/" + unterOrdnerName + "/")
-				print(" ** \033[93m \033[01m Sync " + unterOrdnerName + "/" + str(fileName) + " von C zu USB ! \033[0m")
-				bewegeDateiVon(item, itemPfadOnUSB)
+				system("mkdir ./" + OrdnerName + "/" + unterordnerName + "/")
+				print(" ** \033[93m \033[01m Sync " + unterordnerName + "/" + str(dateiname) + " von C zu USB ! \033[0m")
+				bewegeDateiVon(item, dateipfadUSB)
 
 		#Lösche das Item aus dem Array, damit es nicht nochmal bearbeitet wird in der synUSBzuC
 		try:
-			ItemsOnUSB.remove(itemPfadOnUSB)
-			usbTimes[itemPfadOnUSB] = 0
+			itemsUSB.remove(dateipfadUSB)
+			timesUSB[dateipfadUSB] = 0
 		except ValueError:
 			pass
 
 	print("")
-	return ItemsOnUSB
+	return itemsUSB
 
 def bewegeDateiVon(start, ziel):
 	system("cp -f {0} {1}".format(start, ziel))
 
 
-def synUSBzuC(ItemsOnUSB, cTimes, usbTimes):
+def synUSBzuC(itemsUSB, timesHDD, timesUSB):
 	print("\033[93m \033[4m ***** \033[95mSynchronisere neue Dateien von USB\033[93m *****\033[0m")
 
-	for item in ItemsOnUSB:
+	for item in itemsUSB:
 		#Gibt es diese Datei auch auf C:
 
 		treeItems = item.split("/")
-		unterOrdnerName = treeItems[len(treeItems) - 2]
-		fileName =  treeItems[len(treeItems) - 1]
+		unterordnerName = treeItems[len(treeItems) - 2]
+		dateiname =  treeItems[len(treeItems) - 1]
 
-		if unterOrdnerName == OrdnerName:
-			itemPfadOnC = PathOnC  + OrdnerName + "/" + fileName
+		if unterordnerName == OrdnerName:
+			dateipfadHDD = PfadAufHDD + OrdnerName + "/" + dateiname
 
 			#Vergleichen welche Datei älter ist
-			if  usbTimes[item] > cTimes.get(itemPfadOnC, 0):
-				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
-				bewegeDateiVon(item, itemPfadOnC)
+			if  timesUSB[item] > timesHDD.get(dateipfadHDD, 0):
+				print(" ** \033[93m \033[01m Sync " + str(dateiname) + " von USB zu C ! \033[0m")
+				bewegeDateiVon(item, dateipfadHDD)
 
-			elif usbTimes[item] == cTimes.get(itemPfadOnC, 0):
-				print(" ** \033[92m \033[01m Datei " + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+			elif timesUSB[item] == timesHDD.get(dateipfadHDD, 0):
+				print(" ** \033[92m \033[01m Datei " + str(dateiname) + " ist auf beiden aktuell ! \033[0m")
 
 			else:
-				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von C zu USB! \033[0m")
-				bewegeDateiVon(itemPfadOnC, item)
+				print(" ** \033[93m \033[01m Sync " + str(dateiname) + " von C zu USB! \033[0m")
+				bewegeDateiVon(dateipfadHDD, item)
 
 		else:
-			itemPfadOnC = PathOnC + OrdnerName + "/" + unterOrdnerName + "/" + fileName
-			if path.lexists(PathOnC + OrdnerName + "/" + unterOrdnerName + "/"):
+			dateipfadHDD = PfadAufHDD + OrdnerName + "/" + unterordnerName + "/" + dateiname
+			if path.lexists(PfadAufHDD + OrdnerName + "/" + unterordnerName + "/"):
 				#Ordner existiert in C -> Vergleichen welche Datei älter ist
 
-				if usbTimes[item] > cTimes.get(itemPfadOnC, 0):
-					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/"+ str(fileName) + " von USB zu C ! \033[0m")
-					bewegeDateiVon(item, itemPfadOnC)
+				if timesUSB[item] > timesHDD.get(dateipfadHDD, 0):
+					print(" ** \033[93m \033[01m Sync " + str(unterordnerName) + "/"+ str(dateiname) + " von USB zu C ! \033[0m")
+					bewegeDateiVon(item, dateipfadHDD)
 
-				elif usbTimes[item] == cTimes.get(itemPfadOnC, 0):
-					print(" ** \033[92m \033[01m Datei " + str(unterOrdnerName) + "/" + str(fileName) + " ist auf beiden aktuell ! \033[0m")
+				elif timesUSB[item] == timesHDD.get(dateipfadHDD, 0):
+					print(" ** \033[92m \033[01m Datei " + str(unterordnerName) + "/" + str(dateiname) + " ist auf beiden aktuell ! \033[0m")
 
 				else:
-					print(" ** \033[93m \033[01m Sync " + str(unterOrdnerName) + "/" + str(fileName) + " von C zu USB! \033[0m")
-					bewegeDateiVon(itemPfadOnC, item)
+					print(" ** \033[93m \033[01m Sync " + str(unterordnerName) + "/" + str(dateiname) + " von C zu USB! \033[0m")
+					bewegeDateiVon(dateipfadHDD, item)
 
 			else:
 				#Der Ordner existiert nicht auf C -> erstellen und Datei kopieren
-				system("mkdir " + PathOnC + OrdnerName + "/" + unterOrdnerName + "/")
-				print(" ** \033[93m \033[01m Sync " + str(fileName) + " von USB zu C ! \033[0m")
-				bewegeDateiVon(item, itemPfadOnC)
+				system("mkdir " + PfadAufHDD + OrdnerName + "/" + unterordnerName + "/")
+				print(" ** \033[93m \033[01m Sync " + str(dateiname) + " von USB zu C ! \033[0m")
+				bewegeDateiVon(item, dateipfadHDD)
 
-	if len(ItemsOnUSB) == 0:
+	if len(itemsUSB) == 0:
 		print(" ** Keine da 🤷")
+
+
 backupErstellen()
-iC, iUSB = dateinIndexieren()
-mC, mUSB = mtimeGenerieren(iC, iUSB)
-iUSB = synCzuUSB(iC, iUSB, mC, mUSB)
-synUSBzuC(iUSB, mC, mUSB)
+iHDD, iUSB = dateinIndexieren()
+mHDD, mUSB = mtimeGenerieren(iHDD, iUSB)
+iUSB = synCzuUSB(iHDD, iUSB, mHDD, mUSB)
+synUSBzuC(iUSB, mHDD, mUSB)
